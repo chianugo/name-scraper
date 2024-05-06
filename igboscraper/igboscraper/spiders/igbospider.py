@@ -11,6 +11,6 @@ class IgbospiderSpider(scrapy.Spider):
         
         for name in names:
             yield{
-                'name' : name.css(' a::text').get(),
-                'url' : 'https://www.myigboname.com/{0}'.format(name.css('a::attr(href)').get())
+                'name' : name.css(' a::text').get().strip(),
+                'url' : 'https://www.myigboname.com{0}'.format(name.css('a::attr(href)').get())
             }
