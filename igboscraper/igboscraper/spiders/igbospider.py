@@ -4,13 +4,13 @@ import scrapy
 class IgbospiderSpider(scrapy.Spider):
     name = 'igbospider'
     allowed_domains = ['myigboname.com']
-    start_urls = ['http://myigboname.com/start-with/a']
+    start_urls = ['https://www.myigboname.com/start-with/a']
 
     def parse(self, response):
-        names = response.css('.content a::text').getall()
+        names = response.css('.content a')
         
         for name in names:
             yield{
-                'name' : name.css('.content a::text').get(),
-                'url' : name.css('.content a::attr(href)').get()
+                'name' : name.css(' a::text').get(),
+                'url' : 'https://www.myigboname.com/{0}'.format(name.css('a::attr(href)').get())
             }
