@@ -1,4 +1,5 @@
 from typing import Iterable
+from scrapy.exporters import CsvItemExporter
 import scrapy
 
 
@@ -25,6 +26,7 @@ class IgbospiderSpider(scrapy.Spider):
                   'https://www.myigboname.com/start-with/u',
                   'https://www.myigboname.com/start-with/w',
                   'https://www.myigboname.com/start-with/z',]
+    items =[]
 
     def parse(self, response):
         names = response.css('.content a')
@@ -41,7 +43,7 @@ class IgbospiderSpider(scrapy.Spider):
 
     def parseMeaning(self, response):
         
-        yield{
+        item = {
             'name' : response.css('h1::text').get().strip(),
             'transcription': response.css('.very p::text').get(default='-').strip(),
             'meaning' : response.css('div.very.padded h1 + p + p + p strong::text').get(default='unknown').strip(),
@@ -49,3 +51,13 @@ class IgbospiderSpider(scrapy.Spider):
             'language': 'igbo'
             
         }
+        self.items.append(item)
+        yield item
+        
+    def closed(self, reason):
+        sorted_items = sorted(self.items, key=lambda x: x['name'])  # Sort items alphabetically by 'name'
+        exporter = CsvItemExporter(open("igbo.csv", "wb"))  # Open CSV file for writing
+        exporter.start_exporting()
+        for item in sorted_items:
+            exporter.export_item(item)
+        exporter.finish_exporting()
