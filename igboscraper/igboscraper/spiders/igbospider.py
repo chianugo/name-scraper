@@ -32,13 +32,7 @@ class IgbospiderSpider(scrapy.Spider):
         names = response.css('.content a')
         
         for name in names:
-            # yield{
-            #     'name' : name.css(' a::text').get().strip(),
-            #     'url' : 'https://www.myigboname.com{0}'.format(name.css('a::attr(href)').get())
-            # }
-            
             meaning_page_url =  'https://www.myigboname.com{0}'.format(name.css('a::attr(href)').get())
-            # yield response.follow(meaning_page_url, callback=self.parseMeaning)
             yield scrapy.Request(meaning_page_url, callback=self.parseMeaning)
 
     def parseMeaning(self, response):
