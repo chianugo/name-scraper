@@ -45,11 +45,16 @@ class YorubaspiderSpider(scrapy.Spider):
             term = element.css('strong::text').get()
             description = element.xpath('following-sibling::span[1]/text()').get()
             glosses.append({term: description})
+            
+        meaning_text = response.xpath('//p[@class="intonation"]/text()').get()
+        if meaning_text:
+            meaning_text = meaning_text.strip()
+            meaning_text = ' '.join(meaning_text.split()) 
 
         item = {
             'name' : response.css('#name-entry::text').get().strip(),
             'transcription' : response.css('h4:contains("Morphology") + p::text').get(default='-').strip(),
-            'meaning' : response.css('h4:contains("Meaning of") +p::text').get(default='unknown').strip(),
+            'meaning' : meaning_text if meaning_text else 'unknown',
             'extended meaning': response.css('h4:contains("Extended Meaning") + p::text').get(default='unknown').strip(),
             'gloss': glosses,
             'language' :'yoruba' 
